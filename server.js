@@ -14,6 +14,13 @@ mongoose.connect(process.env.MONGO_URL)
         console.log(err);
     })
 
+//express json
+app.use(express.json({ extended: false }));
+
+
+//Routes
+app.use('/api/user', require('./routes/users'))
+
 
 
 
