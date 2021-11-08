@@ -4,7 +4,7 @@ const User = require('../models/User');
 const { check, validationResult } = require('express-validator');
 
 const CryptoJS = require('crypto-js');
-
+const jwt = require('jsonwebtoken');
 
 
 router.post('/register',
@@ -81,7 +81,20 @@ router.post('/login',
                 return res.status(401).json({ msg: "Invalid email or password" });
             }
 
-            return res.json(user);
+
+            const payload = {
+                id: user._id,
+                isAdmin: user.isAdmin
+            }
+
+            jwt.sign(payload, process.env.JWT_SECRET, {
+                expiresIn: 360000,
+            }, (err, token) => {
+                if (err) throw err;
+                res.json({ token });
+            });
+
+
 
 
 
