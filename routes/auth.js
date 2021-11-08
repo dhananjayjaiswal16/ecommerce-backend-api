@@ -5,6 +5,8 @@ const { check, validationResult } = require('express-validator');
 
 const CryptoJS = require('crypto-js');
 
+
+
 router.post('/register',
     [
         check('username', 'Please add your Name').not().isEmpty(),
@@ -31,7 +33,7 @@ router.post('/register',
                 email,
                 password: CryptoJS.AES.encrypt(
                     password,
-                    process.env.PASS_SEC
+                    process.env.PASSWORD_SECRET
                 ).toString(),
             });
 
@@ -43,6 +45,52 @@ router.post('/register',
             console.error(error.message);
             res.status(500).send("Server error");
         }
+    }
+)
+
+
+
+//LOGIN USER
+router.post('/login',
+    [
+        check('username', 'Please add a valid username').exists(),
+        check('password', 'Please enter a password').exists()
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { username, password } = req.body;
+
+        try {
+            var user = await User.findOne({ username });
+
+            if (!user) {
+                return res.status(401).json({ msg: "User not found" });
+            }
+            const hashedPassword = CryptoJS.AES.decrypt(
+                user.password,
+                process.env.PASSWORD_SECRET
+            );
+
+            const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
+
+            if (password !== originalPassword) {
+                return res.status(401).json({ msg: "Invalid email or password" });
+            }
+
+            return res.json(user);
+
+
+
+
+        } catch (error) {
+            console.error(error.message);
+            res.status(500).send("Server error");//500=server failure 
+        }
+
     }
 )
 
