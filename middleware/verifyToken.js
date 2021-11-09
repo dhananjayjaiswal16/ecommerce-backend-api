@@ -1,21 +1,38 @@
 const jwt = require('jsonwebtoken');
 
-const verifyToken = (req, res, next) => {
-    const authHeader = req.headers.token;
-    if (authHeader) {
-        const token = authHeader.split(" ")[1];
-        jwt.verify(token, process.env.JWT_SEC, (err, user) => {
+const verifyToken = async (req, res, next) => {
+    const token = req.header('x-auth-token');
+
+    if (!token) {
+        return res.status(401).json({ msg: "Authentication required !!" });
+    }
+
+
+    try {
+        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
             if (err) {
-                res.status(403).json("Token is not valid!");
+                res.status(403).json({ msg: "Invalid Token while verifying" });
             }
             req.user = user;
             next();
         });
-    } else {
-        return res.status(401).json("You are not authenticated!");
+    } catch (error) {
+        res.json({ msg: "Invalid Token" });
     }
 }
 
+const verifyTokenAndAuth = (req, res, next) => {
+    verifyToken(req, res, () => {
+        if (req.user.id === req.params.id || req.user.isAdmin) {
+            next();
+        } else {
+            res.status(403).json({ msg: "You are not authorised" });
+        }
+    })
+
+}
+
 module.exports = {
-    verifyToken
+    verifyToken,
+    verifyTokenAndAuth
 }
