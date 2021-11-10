@@ -91,7 +91,8 @@ router.post('/login',
                 expiresIn: '3d',
             }, (err, token) => {
                 if (err) throw err;
-                res.json({ token });
+
+                res.json({ user, token });
             });
 
 
