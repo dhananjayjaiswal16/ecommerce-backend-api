@@ -21,6 +21,7 @@ app.use(express.json({ extended: false }));
 //Routes
 app.use('/api/user', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/product', require('./routes/product'));
 
 
 

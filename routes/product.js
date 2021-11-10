@@ -17,3 +17,18 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
         res.status(500).json({ msg: 'Server while adding product' });
     }
 })
+
+//GET single product
+
+router.get('/find/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        res.status(200).json(product);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json("Server error while fetching product");
+    }
+
+})
+
+module.exports = router;
