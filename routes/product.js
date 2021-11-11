@@ -91,7 +91,8 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
 
         res.status(200).json(updatedProduct);
     } catch (error) {
-
+        console.error(error);
+        res.status(500).json({ msg: 'Server error while updating product' })
     }
 })
 

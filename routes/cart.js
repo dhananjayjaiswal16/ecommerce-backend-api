@@ -34,5 +34,38 @@ router.delete('/:id', verifyTokenAndAuth, async (req, res) => {
 })
 
 
+//UPDATE
+router.put('/:id', verifyTokenAndAuth, async (req, res) => {
+    try {
+        const cart = Cart.findById(req.params.id);
+
+        if (!cart) {
+            res.status(404).json({ msg: 'Cart not found' });
+        }
+
+        const updatedCart = await Cart.findByIdAndUpdate(req.params.id, {
+            $set: req.body
+        }, { new: true });
+
+        res.status(200).json(updatedCart);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server error while updating cart' })
+    }
+})
+
+//GET single cart
+
+router.get('/find/:id', verifyTokenAndAuth, async (req, res) => {
+    try {
+        const cart = await Cart.findById(req.params.id);
+        res.status(200).json(cart);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json("Server error while fetching single user's cart");
+    }
+
+})
+
 
 module.exports = router;
