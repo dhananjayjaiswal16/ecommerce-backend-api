@@ -33,13 +33,40 @@ router.get('/find/:id', async (req, res) => {
 
 
 //DELETE product 
+
 router.delete('/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
+        const product = Product.findById(req.params.id);
+
+        if (!product) {
+            res.status(404).json({ msg: 'Product not found' });
+        }
+
         await Product.findByIdAndDelete(req.params.id);
         res.status(200).json({ msg: 'Product deleted' })
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Server error while deleting user" })
+    }
+})
+
+
+//UPDATE product
+router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const product = Product.findById(req.params.id);
+
+        if (!product) {
+            res.status(404).json({ msg: 'Product not found' });
+        }
+
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, {
+            $set: req.body
+        }, { new: true });
+
+        res.status(200).json(updatedProduct);
+    } catch (error) {
+
     }
 })
 
