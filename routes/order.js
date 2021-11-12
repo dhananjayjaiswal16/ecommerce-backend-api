@@ -36,4 +36,26 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+
+//UPDATE
+router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const order = Order.findById(req.params.id);
+
+        if (!order) {
+            res.status(404).json({ msg: 'Order not found' });
+        }
+
+        const updatedOrder = await Order.findByIdAndUpdate(req.params.id, {
+            $set: req.body,
+        }, { new: true }
+        );
+
+        res.status(200).json(updatedOrder);
+    } catch (err) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server error while updating order' })
+    }
+});
+
 module.exports = router;
