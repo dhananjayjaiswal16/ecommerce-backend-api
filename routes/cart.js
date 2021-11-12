@@ -67,7 +67,7 @@ router.get('/find/:id', verifyTokenAndAuth, async (req, res) => {
 
 })
 
-// //GET ALL
+//GET all carts
 
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
     try {
