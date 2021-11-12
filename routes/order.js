@@ -18,6 +18,22 @@ router.post('/', verifyToken, async (req, res) => {
     }
 })
 
+//DELETE order
+router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const order = Order.findById(req.params.id);
 
+        if (!order) {
+            res.status(404).json({ msg: 'Order not found' });
+        }
+
+        await Order.findByIdAndDelete(req.params.id);
+
+        res.status(200).json("Order has been deleted...");
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Server error while delteing order' });
+    }
+});
 
 module.exports = router;
