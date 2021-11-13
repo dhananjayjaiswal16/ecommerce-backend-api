@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const Order = require('../models/Order');
 
-const { verifyTokenAndAuth, verifyTokenAndAdmin } = require('../middleware/verifyToken');
+const { verifyToken, verifyTokenAndAuth, verifyTokenAndAdmin } = require('../middleware/verifyToken');
 
 
 
@@ -86,6 +86,37 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
     } catch (err) {
         console.error(error);
         res.status(500).json({ msg: 'Server error while getting all orders' })
+    }
+});
+
+
+//ADMIN stats
+
+router.get("/income", verifyTokenAndAdmin, async (req, res) => {
+    const date = new Date();
+    const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
+    const pebultimateMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
+
+    try {
+        const income = await Order.aggregate([
+            { $match: { createdAt: { $gte: pebultimateMonth } } },
+            {
+                $project: {
+                    month: { $month: "$createdAt" },
+                    sales: "$amount",
+                },
+            },
+            {
+                $group: {
+                    _id: "$month",
+                    total: { $sum: "$sales" },
+                },
+            },
+        ]);
+        res.status(200).json(income);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'server error while aggreagting user' });
     }
 });
 
