@@ -1,12 +1,15 @@
 const router = require('express').Router();
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
+router.get('/payment', async (req, res) => {
+    res.status(200).json({ msg: 'Got api/checkout' })
+})
 
-router.post('/', async (req, res) => {
+router.post('/payment', async (req, res) => {
     stripe.charges.create({
         source: req.body.tokenId,
         amount: req.body.amount,
-        currency: 'USD'
+        currency: "inr"
     }, (stripeErr, stripeRes) => {
         if (stripeErr) {
             console.error(stripeErr);
