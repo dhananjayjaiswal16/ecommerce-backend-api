@@ -44,7 +44,7 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
   const query = req.query.new;
   try {
     const user = query ?
-      await User.find().sort({ _id: -1 }).limit(2)
+      await User.find().sort({ _id: -1 }).limit(5)
       :
       await User.find();
     res.json(user);
