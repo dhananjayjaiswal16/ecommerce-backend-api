@@ -53,7 +53,7 @@ router.post('/register',
 //LOGIN USER
 router.post('/login',
   [
-    check('username', 'Please add a valid username').exists(),
+    check('email', 'Please add a valid email').exists(),
     check('password', 'Please enter a password').exists()
   ],
   async (req, res) => {
@@ -62,10 +62,10 @@ router.post('/login',
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-      var user = await User.findOne({ username });
+      var user = await User.findOne({ email });
 
       if (!user) {
         return res.status(401).json({ msg: "User not found" });
