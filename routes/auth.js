@@ -18,14 +18,16 @@ router.post('/register',
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { username, email, password } = req.body;
+    const { username, email, password, confirmPassword } = req.body;
 
     try {
       var user = await User.findOne({ email });
-
-
       if (user) {
         return res.json({ msg: 'User already exists' });
+      }
+
+      if (password != confirmPassword) {
+        return res.status(400).json({ msg: 'Passwords do not match. Please try again!' });
       }
 
       user = new User({
