@@ -6,7 +6,7 @@ const cors = require('cors');
 dotenv.config();
 const app = express();
 
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect("mongodb+srv://dhananjay16:Digvijay18@cluster0.dx0so.mongodb.net/ecommerce?retryWrites=true&w=majority")
   .then(() => {
     console.log("database connected...")
   })
